@@ -61,7 +61,7 @@ spec:
           - query: |-
                 from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest")
                   |> filter(fn: (r) => r["_field"] == "ping")
                   |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)
                   |> yield(name: "last")
@@ -94,7 +94,7 @@ spec:
           - query: |-
                 from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest")
                   |> filter(fn: (r) => r["_field"] == "ping_jitter")
                   |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)
                   |> yield(name: "last")
@@ -117,7 +117,7 @@ spec:
           - query: |-
                 from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest")
                   |> filter(fn: (r) => r["_field"] == "packet_loss")
                   |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
                   |> yield(name: "mean")
@@ -155,7 +155,7 @@ spec:
           - query: |-
                 from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest")
                   |> filter(fn: (r) => r["_field"] == "upload_bits" or r["_field"] == "download_bits")
                   |> map(fn: (r) => ({ r with _value: float(v: r._value / (1024.0*1024.0)) }))
                   |> yield(name: "last")
@@ -200,7 +200,7 @@ spec:
           - query: |-
                 from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest")
                   |> filter(fn: (r) => r["_field"] == "download_bits")
                   |> map(fn: (r) => ({ r with _value: float(v: r._value / (1024.0*1024.0)) }))
                   |> yield(name: "last")
@@ -234,7 +234,7 @@ spec:
           - query: |-
                 from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest")
                   |> filter(fn: (r) => r["_field"] == "upload_bits")
                   |> map(fn: (r) => ({ r with _value: float(v: r._value / (1024.0*1024.0)) }))
                   |> yield(name: "last")
@@ -286,7 +286,7 @@ spec:
           timeout = "90s"
 
           ## measurement name suffix (for separating different commands)
-          name_suffix = "_speedtest-tracker"
+          name_suffix = "_speedtest"
 
           ## Data format to consume.
           ## Each data format has its own unique set of configuration options, read
