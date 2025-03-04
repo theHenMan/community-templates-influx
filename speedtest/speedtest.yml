@@ -4,7 +4,7 @@ metadata:
     name: crumbling-lovelace-a76001
 spec:
     color: '#0f0e15'
-    name: speedtest
+    name: speedtest-tracker
 ---
 apiVersion: influxdata.com/v2alpha1
 kind: Bucket
@@ -14,7 +14,7 @@ spec:
     associations:
       - kind: Label
         name: crumbling-lovelace-a76001
-    name: speedtest
+    name: speedtest-tracker
 ---
 apiVersion: influxdata.com/v2alpha1
 kind: Dashboard
@@ -59,10 +59,10 @@ spec:
         position: overlaid
         queries:
           - query: |-
-                from(bucket: "speedtest")
+                from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "exec_speedtest")
-                  |> filter(fn: (r) => r["_field"] == "ping_latency")
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_field"] == "ping")
                   |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)
                   |> yield(name: "last")
         shade: true
@@ -92,9 +92,9 @@ spec:
         position: overlaid
         queries:
           - query: |-
-                from(bucket: "speedtest")
+                from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "exec_speedtest")
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
                   |> filter(fn: (r) => r["_field"] == "ping_jitter")
                   |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)
                   |> yield(name: "last")
@@ -115,10 +115,10 @@ spec:
         name: Packet Loss
         queries:
           - query: |-
-                from(bucket: "speedtest")
+                from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "exec_speedtest")
-                  |> filter(fn: (r) => r["_field"] == "packetLoss")
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_field"] == "packet_loss")
                   |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
                   |> yield(name: "mean")
         width: 3
@@ -153,11 +153,11 @@ spec:
         position: overlaid
         queries:
           - query: |-
-                from(bucket: "speedtest")
+                from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "exec_speedtest")
-                  |> filter(fn: (r) => r["_field"] == "upload_bandwidth" or r["_field"] == "download_bandwidth")
-                  |> map(fn: (r) => ({ r with _value: r._value / 100000.0 }))
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_field"] == "upload_bits" or r["_field"] == "download_bits")
+                  |> map(fn: (r) => ({ r with _value: float(v: r._value / (1024.0*1024.0)) }))
                   |> yield(name: "last")
         shade: true
         width: 12
@@ -198,11 +198,11 @@ spec:
         position: overlaid
         queries:
           - query: |-
-                from(bucket: "speedtest")
+                from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "exec_speedtest")
-                  |> filter(fn: (r) => r["_field"] == "download_bandwidth")
-                  |> map(fn: (r) => ({ r with _value: r._value / 125000.0 }))
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_field"] == "download_bits")
+                  |> map(fn: (r) => ({ r with _value: float(v: r._value / (1024.0*1024.0)) }))
                   |> yield(name: "last")
         shade: true
         suffix: ' Mb/s'
@@ -232,11 +232,11 @@ spec:
         position: overlaid
         queries:
           - query: |-
-                from(bucket: "speedtest")
+                from(bucket: "speedtest-tracker")
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-                  |> filter(fn: (r) => r["_measurement"] == "exec_speedtest")
-                  |> filter(fn: (r) => r["_field"] == "upload_bandwidth")
-                  |> map(fn: (r) => ({ r with _value: r._value / 125000.0 }))
+                  |> filter(fn: (r) => r["_measurement"] == "speedtest-tracker")
+                  |> filter(fn: (r) => r["_field"] == "upload_bits")
+                  |> map(fn: (r) => ({ r with _value: float(v: r._value / (1024.0*1024.0)) }))
                   |> yield(name: "last")
         shade: true
         suffix: ' Mb/s'
@@ -245,7 +245,7 @@ spec:
         xPos: 3
         yCol: _value
         yPos: 3
-    name: Speedtest
+    name: speedtest-tracker
 
 ---
 
@@ -273,20 +273,20 @@ spec:
           organization = "$INFLUX_ORG"
 
           ## Destination bucket to write into.
-          bucket = "speedtest"
+          bucket = "speedtest-tracker"
 
           [agent]
           interval = "30m"
 
           [[inputs.exec]]
           ## Commands array
-          commands = ["speedtest --format=json-pretty"]
+          commands = ["speedtest-tracker --format=json-pretty"]
 
           ## Timeout for each command to complete.
           timeout = "90s"
 
           ## measurement name suffix (for separating different commands)
-          name_suffix = "_speedtest"
+          name_suffix = "_speedtest-tracker"
 
           ## Data format to consume.
           ## Each data format has its own unique set of configuration options, read
