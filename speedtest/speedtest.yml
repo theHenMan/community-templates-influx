@@ -157,7 +157,7 @@ spec:
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
                   |> filter(fn: (r) => r["_measurement"] == "speedtest")
                   |> filter(fn: (r) => r["_field"] == "upload_bits" or r["_field"] == "download_bits")
-                  |> map(fn: (r) => ({ r with _value: float(v: r._value / (1024.0*1024.0)) }))
+                  |> map(fn: (r) => ({ r with _value: float(v: r._value ) / ( 1024.0 * 1024.0 ) }))
                   |> yield(name: "last")
         shade: true
         width: 12
@@ -202,7 +202,7 @@ spec:
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
                   |> filter(fn: (r) => r["_measurement"] == "speedtest")
                   |> filter(fn: (r) => r["_field"] == "download_bits")
-                  |> map(fn: (r) => ({ r with _value: float(v: r._value / (1024.0*1024.0)) }))
+                  |> map(fn: (r) => ({ r with _value: float(v: r._value ) / ( 1024.0 * 1024.0 ) }))
                   |> yield(name: "last")
         shade: true
         suffix: ' Mb/s'
@@ -236,7 +236,7 @@ spec:
                   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
                   |> filter(fn: (r) => r["_measurement"] == "speedtest")
                   |> filter(fn: (r) => r["_field"] == "upload_bits")
-                  |> map(fn: (r) => ({ r with _value: float(v: r._value / (1024.0*1024.0)) }))
+                  |> map(fn: (r) => ({ r with _value: float(v: r._value ) / ( 1024.0 * 1024.0 ) }))
                   |> yield(name: "last")
         shade: true
         suffix: ' Mb/s'
